@@ -124,7 +124,9 @@ class DepartmentServiceTest {
 		departmentService.addPersonToDepartment(1, 1);
 
 		var departmentResponse = departmentService.getDepartment(1);
-		assertThat(departmentResponse.getPersons()).extracting(PersonInfo::getFullName).isEqualTo(List.of("LastName FirstName MiddleName"));
+		assertThat(departmentResponse.getPersons())
+				.extracting(PersonInfo::getFullName)
+				.isEqualTo(List.of("FirstName MiddleName LastName"));
 	}
 
 	@Test

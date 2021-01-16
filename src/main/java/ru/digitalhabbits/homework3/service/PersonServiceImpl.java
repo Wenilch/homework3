@@ -27,22 +27,8 @@ public class PersonServiceImpl
 	@Override
 	public List<PersonResponse> findAllPersons() {
 		return personDao.findAll().stream()
-				.map(this::createPersonResponse)
+				.map(PersonHelper::createPersonResponse)
 				.collect(Collectors.toList());
-	}
-
-	private PersonResponse createPersonResponse(Person person) {
-		var department = person.getDepartment();
-
-		return new PersonResponse()
-				.setId(person.getId())
-				.setAge(person.getAge())
-				.setFullName(PersonHelper.createPersonFullName(person))
-				.setDepartment(
-						department != null
-								? new DepartmentInfo().setId(department.getId()).setName(department.getName())
-								: null
-				);
 	}
 
 	@Nonnull
@@ -51,14 +37,15 @@ public class PersonServiceImpl
 		var person = Optional.ofNullable(personDao.findById(id))
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Человек с идентификатором %d не найдет.", id)));
 
-		return createPersonResponse(person);
+		return PersonHelper.createPersonResponse(person);
 	}
 
 	@Transactional
 	@Nonnull
 	@Override
 	public Integer createPerson(@Nonnull PersonRequest request) {
-		var person = new Person().setFirstName(request.getFirstName())
+		var person = new Person()
+				.setFirstName(request.getFirstName())
 				.setMiddleName(request.getMiddleName())
 				.setLastName(request.getLastName())
 				.setAge(request.getAge());
@@ -93,7 +80,7 @@ public class PersonServiceImpl
 			person.setAge(requestAge);
 		}
 
-		return createPersonResponse(personDao.update(person));
+		return PersonHelper.createPersonResponse(personDao.update(person));
 	}
 
 	@Transactional

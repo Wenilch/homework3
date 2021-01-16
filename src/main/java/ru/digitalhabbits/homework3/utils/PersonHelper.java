@@ -16,7 +16,7 @@ public class PersonHelper {
 	}
 
 	public static String createPersonFullName(Person person) {
-		return person.getLastName() + " " + person.getFirstName() + " " + person.getMiddleName();
+		return person.getFirstName() + " " + person.getMiddleName() + " " + person.getLastName();
 	}
 
 	public static Person createPerson(Department department) {
@@ -62,6 +62,20 @@ public class PersonHelper {
 						new DepartmentInfo()
 								.setId(id)
 								.setName(RandomStringUtils.randomAlphabetic(10))
+				);
+	}
+
+	public static PersonResponse createPersonResponse(Person person) {
+		var department = person.getDepartment();
+
+		return new PersonResponse()
+				.setId(person.getId())
+				.setAge(person.getAge())
+				.setFullName(PersonHelper.createPersonFullName(person))
+				.setDepartment(
+						department != null
+								? new DepartmentInfo().setId(department.getId()).setName(department.getName())
+								: null
 				);
 	}
 

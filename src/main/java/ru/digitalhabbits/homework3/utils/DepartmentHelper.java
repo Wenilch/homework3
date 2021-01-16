@@ -5,6 +5,7 @@ import org.apache.commons.lang3.RandomUtils;
 import ru.digitalhabbits.homework3.domain.Department;
 import ru.digitalhabbits.homework3.model.DepartmentResponse;
 import ru.digitalhabbits.homework3.model.DepartmentShortResponse;
+import ru.digitalhabbits.homework3.model.PersonInfo;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -34,11 +35,6 @@ public class DepartmentHelper {
 	}
 
 	public static DepartmentShortResponse createDepartmentShortResponse(Department department) {
-		var personInfoList = department.getPersons()
-				.stream()
-				.map(PersonHelper::createPersonInfo)
-				.collect(Collectors.toList());
-
 		return new DepartmentShortResponse()
 				.setId(department.getId())
 				.setName(department.getName());

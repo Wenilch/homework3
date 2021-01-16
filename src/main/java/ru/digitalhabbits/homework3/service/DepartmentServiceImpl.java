@@ -11,6 +11,7 @@ import ru.digitalhabbits.homework3.model.DepartmentRequest;
 import ru.digitalhabbits.homework3.model.DepartmentResponse;
 import ru.digitalhabbits.homework3.model.DepartmentShortResponse;
 import ru.digitalhabbits.homework3.model.PersonInfo;
+import ru.digitalhabbits.homework3.utils.DepartmentHelper;
 import ru.digitalhabbits.homework3.utils.PersonHelper;
 
 import javax.annotation.Nonnull;
@@ -32,14 +33,8 @@ public class DepartmentServiceImpl
 	public List<DepartmentShortResponse> findAllDepartments() {
 		return departmentDao.findAll()
 				.stream()
-				.map(this::createDepartmentShortResponse)
+				.map(DepartmentHelper::createDepartmentShortResponse)
 				.collect(Collectors.toList());
-	}
-
-	private DepartmentShortResponse createDepartmentShortResponse(Department department) {
-		return new DepartmentShortResponse()
-				.setId(department.getId())
-				.setName(department.getName());
 	}
 
 	@Nonnull
@@ -48,7 +43,7 @@ public class DepartmentServiceImpl
 		var department = Optional.ofNullable(departmentDao.findById(id))
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Департамент с идентификатором %d не найдет", id)));
 
-		return createDepartmentResponse(department);
+		return DepartmentHelper.createDepartmentResponse(department);
 	}
 
 	@Transactional
@@ -65,20 +60,7 @@ public class DepartmentServiceImpl
 		var department = Optional.ofNullable(departmentDao.findById(id))
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Департамент с идентификатором %d не найдет", id)));
 
-		return createDepartmentResponse(departmentDao.update(department.setName(request.getName())));
-	}
-
-	private DepartmentResponse createDepartmentResponse(Department department) {
-		var personInfoList = department.getPersons().stream()
-				.map(person -> new PersonInfo().setId(person.getId()).setFullName(PersonHelper.createPersonFullName(person)))
-				.collect(Collectors.toList());
-
-		return new DepartmentResponse()
-				.setId(department.getId())
-				.setName(department.getName())
-				.setClosed(department.isClosed())
-				.setPersons(personInfoList);
-
+		return DepartmentHelper.createDepartmentResponse(departmentDao.update(department.setName(request.getName())));
 	}
 
 	@Transactional
