@@ -24,7 +24,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
-          token:
+          token: 2afb2ae6-0bae-4a4f-a8a9-ae95bbd89fed
           file: build/reports/jacoco/report.xml
       - name: Deploy project
         uses: akhileshns/heroku-deploy@v3.4.6
