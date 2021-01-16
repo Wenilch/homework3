@@ -80,7 +80,9 @@ public class PersonServiceImpl
 			person.setAge(requestAge);
 		}
 
-		return PersonHelper.createPersonResponse(personDao.update(person));
+		personDao.update(person);
+
+		return PersonHelper.createPersonResponse(person);
 	}
 
 	@Transactional
