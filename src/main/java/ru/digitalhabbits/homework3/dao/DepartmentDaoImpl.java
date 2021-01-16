@@ -1,7 +1,7 @@
 package ru.digitalhabbits.homework3.dao;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.digitalhabbits.homework3.domain.Department;
 
 import javax.annotation.Nonnull;
@@ -11,32 +11,44 @@ import java.util.List;
 
 @Repository
 public class DepartmentDaoImpl
-        implements DepartmentDao {
+		implements DepartmentDao {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Override
-    public Department findById(@Nonnull Integer integer) {
-        // TODO: NotImplemented
-        throw new NotImplementedException();
-    }
+	@Override
+	public Department findById(@Nonnull Integer integer) {
+		return entityManager.find(Department.class, integer);
+	}
 
-    @Override
-    public List<Department> findAll() {
-        // TODO: NotImplemented
-        throw new NotImplementedException();
-    }
+	@Override
+	public List<Department> findAll() {
+		return entityManager
+				.createQuery("SELECT d FROM Department d", Department.class)
+				.getResultList();
+	}
 
-    @Override
-    public Department update(Department entity) {
-        // TODO: NotImplemented
-        throw new NotImplementedException();
-    }
+	@Override
+	public Department create(Department entity) {
+		entityManager.persist(entity);
 
-    @Override
-    public Department delete(Integer integer) {
-        // TODO: NotImplemented
-        throw new NotImplementedException();
-    }
+		return entity;
+	}
+
+	@Transactional
+	@Override
+	public Department update(Department entity) {
+		return entityManager.merge(entity);
+	}
+
+	@Transactional
+	@Override
+	public Department delete(Integer integer) {
+		var department = findById(integer);
+		if (department != null) {
+			entityManager.remove(department);
+		}
+
+		return department;
+	}
 }

@@ -42,6 +42,8 @@ dependencies {
 
     testImplementation "com.h2database:h2"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "com.google.code.gson:gson:2.8.6";
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc:2.0.5.RELEASE"
 }
 
 jacocoTestReport {

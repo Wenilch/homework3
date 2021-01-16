@@ -5,10 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.digitalhabbits.homework3.exceptions.ConflictException;
 import ru.digitalhabbits.homework3.model.ErrorResponse;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,6 +37,15 @@ public class ExceptionController {
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse error(RuntimeException exception) {
         logger.error("", exception);
+        return new ErrorResponse(exception.getMessage());
+    }
+
+    @ApiResponse(responseCode = "409",
+            description = "Департамент закрыт",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorResponse.class)))
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictException.class)
+    public ErrorResponse error(ConflictException exception) {
         return new ErrorResponse(exception.getMessage());
     }
 }

@@ -8,11 +8,13 @@ import java.util.List;
 @NoRepositoryBean
 public interface CrudOperations<T, ID> {
 
-    T findById(@Nonnull ID id);
+	T findById(@Nonnull ID id);
 
-    List<T> findAll();
+	List<T> findAll();
 
-    T update(T entity);
+	T create(T entity);
 
-    T delete(ID id);
+	T update(T entity);
+
+	T delete(ID id);
 }

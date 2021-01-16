@@ -1,48 +1,105 @@
 package ru.digitalhabbits.homework3.service;
 
-import org.apache.commons.lang3.NotImplementedException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.digitalhabbits.homework3.dao.PersonDao;
+import ru.digitalhabbits.homework3.domain.Person;
+import ru.digitalhabbits.homework3.model.DepartmentInfo;
 import ru.digitalhabbits.homework3.model.PersonRequest;
 import ru.digitalhabbits.homework3.model.PersonResponse;
+import ru.digitalhabbits.homework3.utils.PersonHelper;
 
 import javax.annotation.Nonnull;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PersonServiceImpl
-        implements PersonService {
+		implements PersonService {
 
-    @Nonnull
-    @Override
-    public List<PersonResponse> findAllPersons() {
-        // TODO: NotImplemented: получение информации о всех людях во всех отделах
-        throw new NotImplementedException();
-    }
+	private final PersonDao personDao;
 
-    @Nonnull
-    @Override
-    public PersonResponse getPerson(@Nonnull Integer id) {
-        // TODO: NotImplemented: получение информации о человеке. Если не найдено, отдавать 404:NotFound
-        throw new NotImplementedException();
-    }
+	@Nonnull
+	@Override
+	public List<PersonResponse> findAllPersons() {
+		return personDao.findAll().stream()
+				.map(this::createPersonResponse)
+				.collect(Collectors.toList());
+	}
 
-    @Nonnull
-    @Override
-    public Integer createPerson(@Nonnull PersonRequest request) {
-        // TODO: NotImplemented: создание новой записи о человеке
-        throw new NotImplementedException();
-    }
+	private PersonResponse createPersonResponse(Person person) {
+		var department = person.getDepartment();
 
-    @Nonnull
-    @Override
-    public PersonResponse updatePerson(@Nonnull Integer id, @Nonnull PersonRequest request) {
-        // TODO: NotImplemented: обновление информации о человеке. Если не найдено, отдавать 404:NotFound
-        throw new NotImplementedException();
-    }
+		return new PersonResponse()
+				.setId(person.getId())
+				.setAge(person.getAge())
+				.setFullName(PersonHelper.createPersonFullName(person))
+				.setDepartment(
+						department != null
+								? new DepartmentInfo().setId(department.getId()).setName(department.getName())
+								: null
+				);
+	}
 
-    @Override
-    public void deletePerson(@Nonnull Integer id) {
-        // TODO: NotImplemented: удаление информации о человеке и удаление его из отдела. Если не найдено, ничего не делать
-        throw new NotImplementedException();
-    }
+	@Nonnull
+	@Override
+	public PersonResponse getPerson(@Nonnull Integer id) {
+		var person = Optional.ofNullable(personDao.findById(id))
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Человек с идентификатором %d не найдет.", id)));
+
+		return createPersonResponse(person);
+	}
+
+	@Transactional
+	@Nonnull
+	@Override
+	public Integer createPerson(@Nonnull PersonRequest request) {
+		var person = new Person().setFirstName(request.getFirstName())
+				.setMiddleName(request.getMiddleName())
+				.setLastName(request.getLastName())
+				.setAge(request.getAge());
+
+		return personDao.create(person).getId();
+	}
+
+	@Transactional
+	@Nonnull
+	@Override
+	public PersonResponse updatePerson(@Nonnull Integer id, @Nonnull PersonRequest request) {
+		var person = Optional.ofNullable(personDao.findById(id))
+				.orElseThrow(() -> new EntityNotFoundException(String.format("Человек с идентификатором %d не найдет.", id)));
+
+		var requestFirstName = request.getFirstName();
+		if (requestFirstName != null && requestFirstName.equals(person.getFirstName())) {
+			person.setFirstName(requestFirstName);
+		}
+
+		var requestLastName = request.getLastName();
+		if (requestLastName != null && requestLastName.equals(person.getLastName())) {
+			person.setLastName(requestLastName);
+		}
+
+		var requestMiddleName = request.getMiddleName();
+		if (requestMiddleName != null && requestMiddleName.equals(person.getMiddleName())) {
+			person.setMiddleName(requestMiddleName);
+		}
+
+		var requestAge = request.getAge();
+		if (requestAge != null && requestAge.equals(person.getAge())) {
+			person.setAge(requestAge);
+		}
+
+		return createPersonResponse(personDao.update(person));
+	}
+
+	@Transactional
+	@Override
+	public void deletePerson(@Nonnull Integer id) {
+		Optional.ofNullable(personDao.findById(id))
+				.ifPresent(person -> personDao.delete(person.getId()));
+	}
 }
