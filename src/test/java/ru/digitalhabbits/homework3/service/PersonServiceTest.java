@@ -88,7 +88,8 @@ class PersonServiceTest {
 		when(personDao.findById(Mockito.anyInt())).thenReturn(person);
 		when(personDao.update(Mockito.any(Person.class))).thenReturn(updatePerson);
 
-		var personResponse = personService.updatePerson(person.getId(), new PersonRequest());
+		var personResponse = personService
+				.updatePerson(person.getId(), PersonHelper.createPersonRequest(updatePerson));
 
 		assertEquals(personResponse.getFullName(), PersonHelper.createPersonFullName(updatePerson));
 	}

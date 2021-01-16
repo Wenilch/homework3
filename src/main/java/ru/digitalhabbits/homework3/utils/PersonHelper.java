@@ -53,6 +53,14 @@ public class PersonHelper {
 				.setAge(RandomUtils.nextInt(1, 99));
 	}
 
+	public static PersonRequest createPersonRequest(Person person) {
+		return new PersonRequest()
+				.setFirstName(person.getFirstName())
+				.setMiddleName(person.getMiddleName())
+				.setLastName(person.getLastName())
+				.setAge(person.getAge());
+	}
+
 	public static PersonResponse createPersonResponse(Integer id) {
 		return new PersonResponse()
 				.setId(id)

@@ -61,22 +61,22 @@ public class PersonServiceImpl
 				.orElseThrow(() -> new EntityNotFoundException(String.format("Человек с идентификатором %d не найдет.", id)));
 
 		var requestFirstName = request.getFirstName();
-		if (requestFirstName != null && requestFirstName.equals(person.getFirstName())) {
+		if (requestFirstName != null && !requestFirstName.equals(person.getFirstName())) {
 			person.setFirstName(requestFirstName);
 		}
 
 		var requestLastName = request.getLastName();
-		if (requestLastName != null && requestLastName.equals(person.getLastName())) {
+		if (requestLastName != null && !requestLastName.equals(person.getLastName())) {
 			person.setLastName(requestLastName);
 		}
 
 		var requestMiddleName = request.getMiddleName();
-		if (requestMiddleName != null && requestMiddleName.equals(person.getMiddleName())) {
+		if (requestMiddleName != null && !requestMiddleName.equals(person.getMiddleName())) {
 			person.setMiddleName(requestMiddleName);
 		}
 
 		var requestAge = request.getAge();
-		if (requestAge != null && requestAge.equals(person.getAge())) {
+		if (requestAge != null && !requestAge.equals(person.getAge())) {
 			person.setAge(requestAge);
 		}
 
